@@ -1,0 +1,23 @@
+# Use the official Golang image as a build stage
+FROM golang:1.19 as builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the Go application
+COPY . .
+
+# Build the application
+RUN go build -o main ./cmd/pawntoqueen-go
+
+# Use a minimal base image
+FROM gcr.io/distroless/base
+
+# Copy the built application
+COPY --from=builder /app/main /app/main
+
+# Set the entrypoint
+ENTRYPOINT ["/app/main"]
+
+# Expose port
+EXPOSE 8080
